@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Information Form</title>
+    <style>
+        body {
+            background-image: url("amb1.jpg");
+            font-family: Arial, sans-serif;
+            background-color: #f5f9ff; /* Light background color */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            padding: 30px;
+            width: 90%; /* Adjusted width */
+            max-width: 600px; /* Maximum width */
+            text-align: center;
+            margin-bottom: 30px; /* Add some space below the form */
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #2077bf; /* Teal color for heading */
+            font-size: 1.5em; /* Larger heading size */
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #333333; /* Dark gray */
+            text-align: left; /* Align labels to the left */
+        }
+
+        input[type="text"],
+        input[type="submit"] {
+            width: calc(100% - 10px);
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #cccccc; /* Light gray border */
+            border-radius: 4px;
+        }
+
+        input[type="text"] {
+            background-color: #e9ecef; /* Light gray background for input fields */
+        }
+
+        input[type="submit"] {
+            background-color: #2077bf; /* Teal color for submit button */
+            color: #ffffff; /* White color for submit button text */
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #1b67a8; /* Darker teal on hover */
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 20px;
+                width: 95%; /* Adjusted width for smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Patient Information Form</h1>
+        <form action="/submit" method="post">
+            <label for="patient_id">Patient ID:</label>
+            <input type="text" id="patient_id" name="patient_id" required><br>
+
+            <label for="disease_name">Disease Name:</label>
+            <input type="text" id="disease_name" name="disease_name" required><br>
+
+            <label for="test_result_vital_signs">Vital Signs Monitoring:</label>
+            <input type="text" id="test_result_vital_signs" name="test_result_vital_signs" required><br>
+
+            <label for="test_result_gcs">Glasgow Coma Scale (GCS):</label>
+            <input type="text" id="test_result_gcs" name="test_result_gcs" required><br>
+
+            <label for="test_result_blood_glucose">Blood Glucose Monitoring:</label>
+            <input type="text" id="test_result_blood_glucose" name="test_result_blood_glucose" required><br>
+
+            <label for="test_result_pulse_oximetry">Pulse Oximetry:</label>
+            <input type="text" id="test_result_pulse_oximetry" name="test_result_pulse_oximetry" required><br>
+
+            <label for="test_result_ecg">Electrocardiogram (ECG):</label>
+            <input type="text" id="test_result_ecg" name="test_result_ecg" required><br>
+
+            <label for="test_result_capnography">Capnography:</label>
+            <input type="text" id="test_result_capnography" name="test_result_capnography" required><br>
+
+            <label for="test_result_cardiac_enzyme">Cardiac Enzyme Testing:</label>
+            <input type="text" id="test_result_cardiac_enzyme" name="test_result_cardiac_enzyme" required><br>
+
+            <label for="test_result_pregnancy_testing">Pregnancy Testing:</label>
+            <input type="text" id="test_result_pregnancy_testing" name="test_result_pregnancy_testing" required><br>
+
+            <label for="test_result_stroke_assessment">Stroke Assessment Tools:</label>
+            <input type="text" id="test_result_stroke_assessment" name="test_result_stroke_assessment" required><br>
+
+            <label for="test_result_pain_assessment">Pain Assessment:</label>
+            <input type="text" id="test_result_pain_assessment" name="test_result_pain_assessment" required><br>
+
+            <!-- Add other test options as needed -->
+
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+</html>
