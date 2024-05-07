@@ -1,3 +1,4 @@
 Flask
 confluent-kafka
 paho-mqtt
+gunicorn
