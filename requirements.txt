@@ -1,4 +1,6 @@
-Flask
-confluent-kafka
+flask
+pandas
+scikit-learn
+joblib
 paho-mqtt
 gunicorn
