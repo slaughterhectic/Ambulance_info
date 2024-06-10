@@ -1,19 +1,19 @@
-# Import necessary libraries
-from flask import Flask, render_template, request, redirect, url_for
-from confluent_kafka import Producer
+from flask import Flask, render_template, request, redirect, url_for, flash
+from confluent_kafka import Producer, KafkaException
 import json
 import paho.mqtt.client as mqtt
+import os
 
-# Initialize Flask app
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Necessary for flash messages
 
-# Kafka Producer configuration
+# Kafka Producer configuration using environment variables for security
 conf = {
     'bootstrap.servers': "pkc-12576z.us-west2.gcp.confluent.cloud:9092",
     'security.protocol': "SASL_SSL",
     'sasl.mechanism': "PLAIN",
-    'sasl.username': "ZYREEULMDMG3KM2W",
-    'sasl.password': "Bgr9qDoWEu7m279s9WaJlMxmqwX7PZX00AKC4bcYHW29gmTf+ICaF10INqG1GquA"
+    'sasl.username': "4ZTYCZCKHXZ2J3CT",
+    'sasl.password': "HGk2jjaCF+9xkCBjzxuJcOSqsOpf3rMOLOL6KmeMt6roqEzcka1Dak7YbfUKzxVb"
 }
 producer = Producer(**conf)
 
@@ -21,58 +21,79 @@ producer = Producer(**conf)
 mqtt_broker = "test.mosquitto.org"
 mqtt_port = 1883
 mqtt_topic = "hospital/results"
+mqtt_feedback_topic = "hospital/feedback"
 
 # MQTT client setup
 mqtt_client = mqtt.Client()
 
+feedback_messages = []
+
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
-    client.subscribe(mqtt_topic)
+    if rc == 0:
+        print("Connected to MQTT Broker")
+        client.subscribe(mqtt_feedback_topic)
+    else:
+        print("Failed to connect, return code %d\n", rc)
 
-def on_publish(client, userdata, mid):
-    print("Message published")
+def on_message(client, userdata, msg):
+    global feedback_messages
+    payload = msg.payload.decode()
+    feedback_messages.append(payload)
+    print("Received feedback message:", payload)  # Debugging statement
 
-# Set MQTT callbacks
 mqtt_client.on_connect = on_connect
-mqtt_client.on_publish = on_publish
+mqtt_client.on_message = on_message
 
 # Connect to MQTT broker
 mqtt_client.connect(mqtt_broker, mqtt_port, 60)
+mqtt_client.loop_start()
 
-# Route for rendering the form
 @app.route('/')
-def index():
-    return render_template('index.html')
+def index1():
+    global feedback_messages
+    return render_template('index1.html', feedback_messages=feedback_messages)
 
-# Route for submitting the form
 @app.route('/submit', methods=['POST'])
 def submit():
-    # Get form data
     patient_id = request.form['patient_id']
     disease_name = request.form['disease_name']
 
-    # Extract test results from form data
     test_results = {}
     for key, value in request.form.items():
         if key.startswith('test_result_'):
             test_name = key.split('_')[-1]
             test_results[test_name] = value
 
-    # Construct patient data
     patient_data = {
         'patient_id': patient_id,
         'disease_name': disease_name,
         'test_results': test_results
     }
 
-    # Produce message to Kafka topic
-    producer.produce('topic0', value=json.dumps(patient_data))
-    producer.flush()
+    try:
+        producer.produce('topic1', value=json.dumps(patient_data))
+        producer.flush()
+        flash('Data sent to Kafka successfully!', 'success')
+    except KafkaException as e:
+        flash(f'Failed to send data to Kafka: {e}', 'danger')
 
-    # Publish message to MQTT topic
-    mqtt_client.publish(mqtt_topic, json.dumps(patient_data))
+    result = mqtt_client.publish(mqtt_topic, json.dumps(patient_data))
+    if result.rc == mqtt.MQTT_ERR_SUCCESS:
+        flash('Data sent to MQTT successfully!', 'success')
+    else:
+        flash('Failed to send data to MQTT', 'danger')
 
-    return redirect(url_for('index'))
+    return redirect(url_for('index1'))
+
+@app.route('/send_feedback', methods=['POST'])
+def send_feedback():
+    feedback_message = request.form['feedback_message']
+    result = mqtt_client.publish(mqtt_feedback_topic, feedback_message)
+    if result.rc == mqtt.MQTT_ERR_SUCCESS:
+        flash('Feedback sent successfully!', 'success')
+    else:
+        flash('Failed to send feedback', 'danger')
+    return redirect(url_for('index1'))
 
 if __name__ == '__main__':
     app.run(debug=True, port=5002)
