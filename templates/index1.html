@@ -6,72 +6,111 @@
     <title>Patient Information Form</title>
     <style>
         body {
-            background-image: url("amb1.jpg");
-            font-family: Arial, sans-serif;
-            background-color: #f5f9ff; /* Light background color */
+            background-image: url("amb1.jpg"); /* Replace with your desired background image */
+            background-size: cover;
+            background-position: center;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
         }
 
         .container {
-            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent white */
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
-            padding: 30px;
-            width: 90%; /* Adjusted width */
-            max-width: 600px; /* Maximum width */
-            text-align: center;
-            margin-bottom: 30px; /* Add some space below the form */
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            margin-top: 20px;
         }
 
-        h1 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: #2077bf; /* Teal color for heading */
-            font-size: 1.5em; /* Larger heading size */
+        h1, h2 {
+            color: #333333;
+            text-align: center;
         }
 
         label {
             font-weight: bold;
             display: block;
             margin-bottom: 5px;
-            color: #333333; /* Dark gray */
-            text-align: left; /* Align labels to the left */
+            color: #333333;
+            text-align: left;
         }
 
         input[type="text"],
         input[type="submit"] {
-            width: calc(100% - 10px);
-            padding: 8px;
+            width: calc(100% - 20px);
+            padding: 10px;
             margin-bottom: 15px;
-            border: 1px solid #cccccc; /* Light gray border */
-            border-radius: 4px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
         }
 
         input[type="text"] {
-            background-color: #e9ecef; /* Light gray background for input fields */
+            background-color: #e9ecef;
         }
 
         input[type="submit"] {
-            background-color: #2077bf; /* Teal color for submit button */
-            color: #ffffff; /* White color for submit button text */
+            background-color: #007bff;
+            color: #ffffff;
             border: none;
             cursor: pointer;
         }
 
         input[type="submit"]:hover {
-            background-color: #1b67a8; /* Darker teal on hover */
+            background-color: #0056b3;
+        }
+
+        .flashes {
+            list-style-type: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .flashes li {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .feedback-container {
+            margin-top: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul li {
+            background-color: #e9ecef;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
         }
 
         /* Responsive adjustments */
         @media screen and (max-width: 768px) {
             .container {
-                padding: 20px;
-                width: 95%; /* Adjusted width for smaller screens */
+                width: 95%;
             }
         }
     </style>
@@ -79,6 +118,15 @@
 <body>
     <div class="container">
         <h1>Patient Information Form</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
         <form action="/submit" method="post">
             <label for="patient_id">Patient ID:</label>
             <input type="text" id="patient_id" name="patient_id" required><br>
@@ -116,10 +164,26 @@
             <label for="test_result_pain_assessment">Pain Assessment:</label>
             <input type="text" id="test_result_pain_assessment" name="test_result_pain_assessment" required><br>
 
-            <!-- Add other test options as needed -->
-
             <input type="submit" value="Submit">
         </form>
+    </div>
+
+    <div class="container feedback-container">
+        <h2>Send Feedback</h2>
+        <form action="/send_feedback" method="post">
+            <label for="feedback_message">Message:</label>
+            <input type="text" id="feedback_message" name="feedback_message" required>
+            <input type="submit" value="Send">
+        </form>
+    </div>
+
+    <div class="container feedback-container">
+        <h2>Feedback Messages</h2>
+        <ul>
+            {% for message in feedback_messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
     </div>
 </body>
 </html>
